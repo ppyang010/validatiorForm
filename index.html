@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>validatior demo</title>
+<style>
+</style>
+</head>
+<body>
+	<div style="height: 300px; overflow: auto;">
+		<h1>使用规范</h1>
+		<ol>
+			<li>必须引入jquery</li>
+			<li>可以使用input和textarea两种标签</li>
+			<li>input标签推荐使用type=text的</li>
+			<li>标签中添加的类的说明
+				<ul>
+					<li>va-text:验证文本是否为空</li>
+					<li>va-email:验证邮箱是否为空，格式是否正确</li>
+					<li>va-number:验证数字是否为空，格式是否正确</li>
+					<li>va-content:验证内容是否为空，用于texteara</li>
+				</ul>
+			</li>
+			<li>在引入jquery之后，在引入validatior-1.js文件</li>
+			<li>validatior的初始化<br/>
+				<pre>
+					<code>
+var validatior = new Validatior({
+	"formId": "form1"
+});
+					</code>
+				</pre>
+			</li>
+			<li><a href="validatior.js" target="_blank">点击查看validator</a></li>
+		</ol>
+	</div>
+
+	<form id="form1" class="va-from" action="#">
+		<table>
+			<tr>
+				<td>用户名：</td>
+				<td><input type="text" name="username" class="va-text bb"/></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>邮箱：</td>
+				<td><input type="text" name="email" class="aa va-email" /></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>qq：</td>
+				<td><input type="text" name="qq" class="va-number" /></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>家庭住址：</td>
+				<td><input type="text" name="address" class="va-text" /></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>内容：</td>
+				<td><textarea name="content" class="va-content" ></textarea></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td><input type="submit" value="提交" class="va-submit"/></td>
+				<td><input type="reset" value="重置" class="va-reset"/></td>
+				<td></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>
+
+<script src="./jquery.js"></script>
+<script type="text/javascript" src="validatior.js"></script>
+<script type="text/javascript">
+	var validatior = new Validatior({
+		"formId": "form1"
+	});
+</script>
