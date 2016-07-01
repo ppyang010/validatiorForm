@@ -11,7 +11,8 @@ var methods={
 }
 //提示语
 var msg={
-	required:'不能为空'
+	required:'不能为空',
+	email:'email格式错误',
 }
 
 
