@@ -1,3 +1,20 @@
+
+//正则表达式集合
+var regexs={
+	email:/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/,
+	number:/^[0-9]*$/,
+
+}
+//方法
+var methods={
+
+}
+//提示语
+var msg={
+	required:'不能为空'
+}
+
+
 function Validatior() {
 	this._init.apply(this, arguments);
 }
@@ -133,6 +150,19 @@ Validatior.prototype = {
 			contentLabel.html('');
 		} else {
 			contentLabel.html('请填写内容');
+		}
+	},
+
+	required:function(dom){
+		var label = $(dom).next('.va-label');
+		if (label.length == '0') {
+			$(dom).after('<label class="va-label"></label>');
+		}
+		var str=$.trim($(dom).val());
+		if(str){
+			label.html('');
+		}else{
+			label.html('不能为空');
 		}
 	}
 };
