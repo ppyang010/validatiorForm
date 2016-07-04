@@ -47,27 +47,28 @@ Validatior.prototype = {
 			return self.SubmitValid();
 		});
 
-		$(".required")[0].addEventListener("blur",function(){
+
+		$(".required").blur(function(){
 			self.required(this);
 		});
+
 
 		$(".va-text").blur(function() {
 			self.validText(this);
 		});
 
-		/*$(".va-email").bind('blur',function() {
-			self.validEmail(this);
-		});*/
-		$(".va-email")[0].addEventListener("blur",function(){
+
+		$(".va-email").blur(function(){
 			self.validEmail(this);
 		});
 
 		$(".va-number").blur(function() {
+			console.log("number");
 			self.validNumber(this);
 		});
 
 		$(".va-content").blur(function() {
-			
+			console.log("content");
 			self.validContent(this);
 		});
 
