@@ -2,17 +2,32 @@
 //正则表达式集合
 var regexs={
 	email:/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/,
-	number:/^[0-9]*$/,
+	number:/^[0-9]*$/
 
 }
 //方法
 var methods={
+	showMsg:function(dom,msgType){
+		if ($(dom).next('.va-label').length == '0') {
+			$(dom).after('<label class="va-label"></label>');
+		}
+		var label = $(dom).next('.va-label');
+		if(msgType==null||msgType==''){
+			label.html('');
+		}else{
+			console.log(msg[msgType]);
+			if(label.html()==null||label.html()==''){
+				label.html(msg[msgType]);
+			}
+			
+		}
+	}
 
 }
 //提示语
 var msg={
 	required:'不能为空',
-	email:'email格式错误',
+	email:'email格式错误'
 }
 
 
@@ -32,11 +47,18 @@ Validatior.prototype = {
 			return self.SubmitValid();
 		});
 
+		$(".required")[0].addEventListener("blur",function(){
+			self.required(this);
+		});
+
 		$(".va-text").blur(function() {
 			self.validText(this);
 		});
 
-		$(".va-email").blur(function() {
+		/*$(".va-email").bind('blur',function() {
+			self.validEmail(this);
+		});*/
+		$(".va-email")[0].addEventListener("blur",function(){
 			self.validEmail(this);
 		});
 
@@ -45,8 +67,12 @@ Validatior.prototype = {
 		});
 
 		$(".va-content").blur(function() {
+			
 			self.validContent(this);
 		});
+
+	
+			
 	},
 
 	SubmitValid: function() {
@@ -102,21 +128,11 @@ Validatior.prototype = {
 	},
 
 	validEmail: function(dom) {
-		var emailLabel = $(dom).next('.va-label');
-		if (emailLabel.length == '0') {
-			$(dom).after('<label class="va-label"></label>');
-		}
-		emailLabel = $(dom).next('.va-label');
-
 		var email = $.trim($(dom).val());
-		if (email) {
-			if(!email.match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/)) {
-				emailLabel.html("格式不正确！请重新输入");
-			} else {
-				emailLabel.html('');
-			}
+		if(!email.match(regexs.email)) {
+			methods.showMsg(dom,'email');
 		} else {
-			emailLabel.html('请填写邮箱地址');
+			methods.showMsg(dom);
 		}
 	},
 
@@ -155,15 +171,12 @@ Validatior.prototype = {
 	},
 
 	required:function(dom){
-		var label = $(dom).next('.va-label');
-		if (label.length == '0') {
-			$(dom).after('<label class="va-label"></label>');
-		}
+		
 		var str=$.trim($(dom).val());
 		if(str){
-			label.html('');
+			methods.showMsg(dom,'');
 		}else{
-			label.html('不能为空');
+			methods.showMsg(dom,'required');
 		}
 	}
 };
