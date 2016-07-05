@@ -7,19 +7,45 @@ var regexs={
 }
 //方法
 var methods={
-	showMsg:function(dom,msgType){
+	//显示提示信息
+	showMsg:function(dom,msgType,num){
+		var mssg='';
+		var flag=true;
 		if ($(dom).next('.va-label').length == '0') {
 			$(dom).after('<label class="va-label"></label>');
 		}
 		var label = $(dom).next('.va-label');
-		if(msgType==null||msgType==''){
-			label.html('');
-		}else{
+		if(this.isNotEmpty(msgType)){ //需要显示错误信息
 			console.log(msg[msgType]);
-			if(label.html()==null||label.html()==''){
-				label.html(msg[msgType]);
+			if(!this.isNotEmpty(label.html())){
+				if(this.isNotEmpty(num)){
+					mssg=msg[msgType].replace('x',num);
+				}else{
+					mssg=msg[msgType];
+				}
+				
+			}else{
+				mssg=label.html();
 			}
-			
+			flag=false;
+		}else{   //不需要显示错误信息
+			mssg='';
+		}
+		label.html(mssg);
+		return flag;
+	},
+	isNotEmpty:function (str) {
+		if(str==null || str == ''){
+			return false;
+		}else{
+			return true;
+		}
+	},
+	isEmpty:function(str){
+		if(str==null || str == ''){
+			return true;
+		}else{
+			return false;
 		}
 	}
 
@@ -27,7 +53,13 @@ var methods={
 //提示语
 var msg={
 	required:'不能为空',
-	email:'email格式错误'
+	email:'email格式错误',
+	minlength:'长度不能小于x位',
+	maxlength:'长度不能大于x位',
+	minnum:'不能小于x',
+	maxnum:'不能大于x',
+	success:'验证成功',
+	fail:'验证失败'
 }
 
 
@@ -71,6 +103,22 @@ Validatior.prototype = {
 			console.log("content");
 			self.validContent(this);
 		});
+
+		$("[minlength]").blur(function(){
+			console.log("minlength");
+			self.minlength(this);
+		});
+
+		$("[maxlength]").blur(function(){
+			self.maxlength(this);
+		});
+		$("[minnum]").blur(function(){
+			self.minnum(this);
+		});
+		$("[maxnum]").blur(function(){
+			self.maxnum(this);
+		});
+
 
 	
 			
@@ -179,5 +227,54 @@ Validatior.prototype = {
 		}else{
 			methods.showMsg(dom,'required');
 		}
+	},
+	//最小长度 >=
+	minlength:function(dom){
+		var min=dom.getAttribute("minlength");
+		var str=$.trim($(dom).val());
+
+		console.log(min);
+		 if(str.length>=min){
+		 	methods.showMsg(dom,'');
+		 }else{
+		 	methods.showMsg(dom,'minlength',min);
+		 }
+	},
+
+	//最大长度 <=
+	maxlength:function(dom){
+		var num=dom.getAttribute("maxlength");
+		var str=$.trim($(dom).val());
+		if(str.length<=num){
+			methods.showMsg(dom,'');
+		}else{
+			methods.showMsg(dom,'maxlength',num);
+		}
+	},
+	minnum:function(dom){
+		var num=dom.getAttribute("minnum");
+		var str=$.trim($(dom).val());
+		if(str.length<=num){
+			methods.showMsg(dom,'');
+		}else{
+			methods.showMsg(dom,'minnum',num);
+		}
+	},
+	//远程验证 功能未进行验证
+	remote:function(dom){
+		var url=dom.getAttribute("remote");
+		var param=$.trim($(dom).val());
+		if(methods.isNotEmpty(url)){
+			$.post(url,{param :param},function(data) {
+				if(data){
+					return methods.showMsg(dom,'success');
+				}else{
+					return methods.showMsg(dom,'fail');
+				}
+			},'json')
+		}eles{
+			return methods.showMsg(dom,'required');
+		}
 	}
+
 };
