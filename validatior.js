@@ -2,7 +2,7 @@
 //正则表达式集合
 var regexs={
 	email:/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/,
-	number:/^[0-9]*$/
+	number:/^\d{1,}$/
 
 }
 //方法
@@ -59,7 +59,8 @@ var msg={
 	minnum:'不能小于x',
 	maxnum:'不能大于x',
 	success:'验证成功',
-	fail:'验证失败'
+	fail:'验证失败',
+	number:'请输入数字'
 }
 
 
@@ -99,10 +100,7 @@ Validatior.prototype = {
 			self.validNumber(this);
 		});
 
-		$(".va-content").blur(function() {
-			console.log("content");
-			self.validContent(this);
-		});
+		
 
 		$("[minlength]").blur(function(){
 			console.log("minlength");
@@ -143,9 +141,6 @@ Validatior.prototype = {
 				} else if (attr.indexOf("va-number") >= 0) {
 					self.validNumber(dqinput);
 					temp += dqinput.next('.va-label').html();
-				} else if (attr.indexOf("va-content") >= 0) {
-					self.validContent(dqinput);
-					temp += dqinput.next('.va-label').html();
 				}
 
 			});
@@ -175,7 +170,7 @@ Validatior.prototype = {
 			textLabel.html('请填写信息');
 		}
 	},
-
+	//验证邮箱
 	validEmail: function(dom) {
 		var email = $.trim($(dom).val());
 		if(!email.match(regexs.email)) {
@@ -184,40 +179,17 @@ Validatior.prototype = {
 			methods.showMsg(dom);
 		}
 	},
-
+	//验证数字
 	validNumber: function(dom) {
-		var numberLabel = $(dom).next('.va-label');
-		if (numberLabel.length == '0') {
-			$(dom).after('<label class="va-label"></label>');
-		}
-		numberLabel = $(dom).next('.va-label');
-
 		var number = $.trim($(dom).val());
-		if (number) {
-			if(!number.match(/^[0-9]*$/)) {
-				numberLabel.html("格式不正确！请重新输入");
-			} else {
-				numberLabel.html('');
-			}
+		if(!number.match(regexs.number)) {
+			methods.showMsg(dom,'number');
 		} else {
-			numberLabel.html('请填写数字');
+			methods.showMsg(dom,'');
 		}
 	},
 
-	validContent: function(dom) {
-		var contentLabel = $(dom).next('.va-label');
-		if (contentLabel.length == '0') {
-			$(dom).after('<label class="va-label"></label>');
-		}
-		contentLabel = $(dom).next('.va-label');
 
-		var content = $.trim($(dom).val());
-		if (content) {
-			contentLabel.html('');
-		} else {
-			contentLabel.html('请填写内容');
-		}
-	},
 
 	required:function(dom){
 		
@@ -259,9 +231,9 @@ Validatior.prototype = {
 		}else{
 			methods.showMsg(dom,'minnum',num);
 		}
-	},
+	}
 	//远程验证 功能未进行验证
-	remote:function(dom){
+/*	remote:function(dom){
 		var url=dom.getAttribute("remote");
 		var param=$.trim($(dom).val());
 		if(methods.isNotEmpty(url)){
@@ -271,10 +243,10 @@ Validatior.prototype = {
 				}else{
 					return methods.showMsg(dom,'fail');
 				}
-			},'json')
+			},'json');
 		}eles{
 			return methods.showMsg(dom,'required');
 		}
-	}
+	}*/
 
 };
