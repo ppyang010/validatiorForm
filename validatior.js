@@ -1,5 +1,5 @@
 
-//默认正则表达式集合 
+//默认正则表达式集合 	
 var regexs={
 	email:/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/,
 	number:/^\d{1,}$/,
@@ -15,10 +15,17 @@ var methods={
 	showMsg:function(dom,msgType,num){
 		var mssg='';
 		var flag=true;
-		if ($(dom).next('.va-label').length == '0') {
-			$(dom).after('<label class="va-label"></label>');
+		var label;
+		if(this.isEmpty(msgLabel)){
+			if ($(dom).next('.va-label').length == '0') {
+				$(dom).after('<label class="va-label"></label>');
+			}
+			label = $(dom).next('.va-label');
+		}else{
+			label=$(msgLabel);
 		}
-		var label = $(dom).next('.va-label');
+		
+
 		if(this.isNotEmpty(msgType)){ //需要显示错误信息
 			count++;
 			console.log(msg[msgType]);
@@ -78,6 +85,7 @@ function Validatior() {
 Validatior.prototype = {
 	_init: function(options) {
 		this.formId = options.formId;
+		msgLabel=options.msgLabel;
 		this.validation();
 	},
 
