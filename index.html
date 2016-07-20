@@ -44,7 +44,7 @@ var validatior = new Validatior({
 			</tr>
 			<tr>
 				<td>邮箱：</td>
-				<td><input type="text" name="email" class="aa va-email "   /></td>
+				<td><input type="text" name="email" class="validEmail"   /></td>
 				<td></td>
 			</tr>
 			<tr>
@@ -55,27 +55,27 @@ var validatior = new Validatior({
 
 			<tr>
 				<td>qq：</td>
-				<td><input type="text" name="qq" class="va-number"  /></td>
+				<td><input type="text" name="qq" class="validNumber"  maxnum="100" /></td>
 				<td></td>
 			</tr>
 			<tr>
 				<td>手机号：</td>
-				<td><input type="text" name="qq" class="va-phone "  /></td>
+				<td><input type="text" name="qq" class="validPhone " maxlength="5" minlength="2" /></td>
 				<td></td>
 			</tr>
 			<tr>
 				<td>日期：</td>
-				<td><input type="text"  class="va-date "  /></td>
+				<td><input type="text"  class="validDate "  /></td>
 				<td></td>
 			</tr>
 			<tr>
 				<td>家庭住址：</td>
-				<td><input type="text" name="address" class="va-text" /></td>
+				<td><input type="text" name="address" class="required" /></td>
 				<td></td>
 			</tr>
 			<tr>
 				<td>内容：</td>
-				<td><textarea name="content" class="va-content" ></textarea></td>
+				<td><textarea name="content" class="required" ></textarea></td>
 				<td></td>
 			</tr>
 			<tr>
@@ -93,8 +93,12 @@ var validatior = new Validatior({
 <script src="./jquery.js"></script>
 <script type="text/javascript" src="validatior.js?1"></script>
 <script type="text/javascript">
-	var validatior = new Validatior({
+/*	var validatior = new Validatior({
 		"formId": "form1",
 		msgLabel:'#msgLabel'
+	});*/
+
+	var validatior = new Validatior({
+		"formId": "form1"
 	});
 </script>

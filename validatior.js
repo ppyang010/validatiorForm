@@ -59,6 +59,16 @@ var methods={
 		}else{
 			return false;
 		}
+	},
+	toShow:function(flag,dom,msgType,num){
+		if(Validatior.prototype.required(dom)){
+			if(flag) {
+				return methods.showMsg(dom,'');
+			} else {
+				return methods.showMsg(dom,msgType,num);
+			}
+		}
+		return false;
 	}
 
 }
@@ -77,6 +87,10 @@ var msg={
 	date:'日期格式不正确'
 }
 
+var mods={
+	'class':['required','validEmail','validNumber','validPhone','validDate'],
+	'attr':['minlength','maxlength','minnum','maxnum']
+}
 
 function Validatior() {
 	this._init.apply(this, arguments);
@@ -95,8 +109,26 @@ Validatior.prototype = {
 			return self.SubmitValid();
 		});
 
+		
 
-		$(".required").blur(function(){
+
+		mods.class.forEach(function(value, index, array){
+			$("."+value).blur(function(){
+				self[value](this);
+			});
+		});
+
+
+		mods.attr.forEach(function(value, index, array){
+			$("["+value+"]").blur(function(){
+				self[value](this);
+			});
+		});
+
+
+
+
+		/*$(".required").blur(function(){
 			 self.required(this);
 		});
 
@@ -129,11 +161,11 @@ Validatior.prototype = {
 			if(self.required(this)){
 				  self.validDate(this);
 			}
-		});
+		});*/
 
 		
 
-		$("[minlength]").blur(function(){
+/*		$("[minlength]").blur(function(){
 			  self.minlength(this);
 		});
 
@@ -145,7 +177,7 @@ Validatior.prototype = {
 		});
 		$("[maxnum]").blur(function(){
 			 self.maxnum(this);
-		});
+		});*/
 
 
 	
@@ -178,29 +210,21 @@ Validatior.prototype = {
 	//验证邮箱
 	validEmail: function(dom) {
 		var email = $.trim($(dom).val());
-		if(!email.match(regexs.email)) {
-			return methods.showMsg(dom,'email');
-		} else {
-			return methods.showMsg(dom);
-		}
+
+		var flag=email.match(regexs.email);
+		return methods.toShow(flag,dom,'email');
 	},
 	//验证数字
 	validNumber: function(dom) {
 		var number = $.trim($(dom).val());
-		if(!number.match(regexs.number)) {
-			return methods.showMsg(dom,'number');
-		} else {
-			return methods.showMsg(dom,'');
-		}
+		var flag=number.match(regexs.number);
+		return methods.toShow(flag,dom,'number');
 	},
 	//验证手机号
 	validPhone: function(dom) {
 		var number = $.trim($(dom).val());
-		if(!number.match(regexs.phone)) {
-			return methods.showMsg(dom,'phone');
-		} else {
-			return methods.showMsg(dom,'');
-		}	
+		var flag=number.match(regexs.phone);
+		return methods.toShow(flag,dom,'number');
 	},
 
 	/**
@@ -213,11 +237,9 @@ Validatior.prototype = {
 	 */
 	validDate:function(dom){
 		var str = $.trim($(dom).val());
-		if(!str.match(regexs.date)) {
-			return methods.showMsg(dom,'date');
-		} else {
-			return methods.showMsg(dom,'');
-		}
+		var flag=str.match(regexs.date);
+		return methods.toShow(flag,dom,'date');
+
 	},
 	//验证非空
 	required:function(dom){
@@ -237,34 +259,32 @@ Validatior.prototype = {
 	minlength:function(dom){
 		var min=dom.getAttribute("minlength");
 		var str=$.trim($(dom).val());
-
-		console.log(min);
-		 if(str.length>=min){
-		 	return methods.showMsg(dom,'');
-		 }else{
-		 	return methods.showMsg(dom,'minlength',min);
-		 }
+		var flag=(str.length>=min);
+		return methods.toShow(flag,dom,'minlength',min);
 	},
 
 	//最大长度 <=
 	maxlength:function(dom){
 		var num=dom.getAttribute("maxlength");
 		var str=$.trim($(dom).val());
-		if(str.length<=num){
-			return methods.showMsg(dom,'');
-		}else{
-			return methods.showMsg(dom,'maxlength',num);
-		}
+		
+		var flag=(str.length<=num);
+		return methods.toShow(flag,dom,'maxlength',num);
 	},
-	//最低长度
+	//最小值
 	minnum:function(dom){
 		var num=dom.getAttribute("minnum");
 		var str=$.trim($(dom).val());
-		if(str.length<=num){
-			return methods.showMsg(dom,'');
-		}else{
-			return methods.showMsg(dom,'minnum',num);
-		}
+		var flag=(+str >= +num);
+		return methods.toShow(flag,dom,'minnum',num);
+	},
+	//最大值
+	maxnum:function(dom){
+		var num=dom.getAttribute("maxnum");
+		var str=$.trim($(dom).val());
+		var flag=(+str <= +num);
+		return methods.toShow(flag,dom,'maxnum',num);
+
 	}
 	//远程验证 功能未进行验证
 /*	remote:function(dom){
