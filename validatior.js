@@ -9,6 +9,9 @@ var regexs={
 
 }
 var count=0;
+
+var inputMap=new Map();
+
 //常用方法
 var methods={
 	//显示提示信息
@@ -16,6 +19,8 @@ var methods={
 		var mssg='';
 		var flag=true;
 		var label;
+		
+		//console.log(inputMap);
 		if(this.isEmpty(msgLabel)){
 			if ($(dom).next('.va-label').length == '0') {
 				$(dom).after('<label class="va-label"></label>');
@@ -28,22 +33,30 @@ var methods={
 
 		if(this.isNotEmpty(msgType)){ //需要显示错误信息
 			count++;
-			console.log(msg[msgType]);
-			if(this.isNotEmpty(num)){
-				mssg=msg[msgType].replace('x',num);
+			//console.log(msg[msgType]);
+			if(!this.isNotEmpty(label.html())){
+				if(this.isNotEmpty(num)){
+					mssg=msg[msgType].replace('x',num);
+				}else{
+					mssg=msg[msgType];
+				}
+				
 			}else{
-				mssg=msg[msgType];
+				mssg=label.html();
 			}
-			
 			flag=false;
+			this.updateMap(dom,flag);
+			
 		}else{   //不需要显示错误信息
-			mssg='';
+			//console.log(inputMap.get(dom));
+			if(inputMap.get(dom)){
+				mssg='';	
+				inputMap.put(dom,true);
+			}else{
+				mssg=label.html();
+				this.updateMap(dom,flag);
+			}
 		}
-		
-		if(this.isNotEmpty(label.html())){
-			mssg=label.html();
-		}
-
 		label.html(mssg);
 		return flag;
 	},
@@ -70,6 +83,13 @@ var methods={
 			}
 		}
 		return false;
+	},
+	updateMap:function(dom,flag){
+		if(inputMap.containsKey(dom)){
+			inputMap.put(dom,inputMap.get(dom)&&flag);
+		}else{
+			inputMap.put(dom,flag);	
+		}
 	}
 
 }
@@ -109,14 +129,23 @@ Validatior.prototype = {
 		$("#" + this.formId).submit(function() {
 			return self.SubmitValid();
 		});
+		var validinput = $("#" + this.formId + " :input");
+		for(var i=0, num = validinput.length;i<num;i++){
+			//console.log(validinput[i]);
+			$(validinput[i]).focus(function(){
+				inputMap.put(this,true);
+			})
+		}
 
-		
+	
 
 
 		mods.class.forEach(function(value, index, array){
 			$("."+value).blur(function(){
 				self[value](this);
 			});
+			
+
 		});
 
 
@@ -124,64 +153,8 @@ Validatior.prototype = {
 			$("["+value+"]").blur(function(){
 				self[value](this);
 			});
+			
 		});
-
-
-
-
-		/*$(".required").blur(function(){
-			 self.required(this);
-		});
-
-
-		$(".va-text").blur(function() {
-			if(self.required(this)){
-				 self.validText(this);
-			}
-		});
-
-
-		$(".va-email").blur(function(){
-			if(self.required(this)){
-				 self.validEmail(this);
-			}
-		});
-
-		$(".va-number").blur(function() {
-			if(self.required(this)){
-				 self.validNumber(this);
-			}
-		});
-
-		$(".va-phone").blur(function() {
-			if(self.required(this)){
-				 self.validPhone(this);
-			}
-		});
-		$(".va-date").blur(function() {
-			if(self.required(this)){
-				  self.validDate(this);
-			}
-		});*/
-
-		
-
-/*		$("[minlength]").blur(function(){
-			  self.minlength(this);
-		});
-
-		$("[maxlength]").blur(function(){
-			 self.maxlength(this);
-		});
-		$("[minnum]").blur(function(){
-			 self.minnum(this);
-		});
-		$("[maxnum]").blur(function(){
-			 self.maxnum(this);
-		});*/
-
-
-	
 			
 	},
 
@@ -204,6 +177,8 @@ Validatior.prototype = {
 
 		return flag;
 	},
+
+
 		
 
 
@@ -305,3 +280,237 @@ Validatior.prototype = {
 	}*/
 
 };
+
+
+
+
+
+
+
+/*
+ * MAP对象，实现MAP功能
+ *
+ * 接口：
+ * size()     获取MAP元素个数
+ * isEmpty()    判断MAP是否为空
+ * clear()     删除MAP所有元素
+ * put(key, value)   向MAP中增加元素（key, value) 
+ * remove(key)    删除指定KEY的元素，成功返回True，失败返回False
+ * get(key)    获取指定KEY的元素值VALUE，失败返回NULL
+ * element(index)   获取指定索引的元素（使用element.key，element.value获取KEY和VALUE），失败返回NULL
+ * containsKey(key)  判断MAP中是否含有指定KEY的元素
+ * containsValue(value) 判断MAP中是否含有指定VALUE的元素
+ * values()    获取MAP中所有VALUE的数组（ARRAY）
+ * keys()     获取MAP中所有KEY的数组（ARRAY）
+ *
+ * 例子：
+ * var map = new Map();
+ *
+ * map.put("key", "value");
+ * var val = map.get("key")
+ * ……
+ *
+ */
+function Map() {
+    this.elements = new Array();
+
+    //获取MAP元素个数
+    this.size = function() {
+        return this.elements.length;
+    };
+
+    //判断MAP是否为空
+    this.isEmpty = function() {
+        return (this.elements.length < 1);
+    };
+
+    //删除MAP所有元素
+    this.clear = function() {
+        this.elements = new Array();
+    };
+
+    //向MAP中增加元素（key, value) 
+    this.put = function(_key, _value) {
+    	if(this.containsKey(_key)){
+    		this.removeByKey(_key);
+    	}
+		this.elements.push( {
+        	key : _key,
+        	value : _value
+    	});
+        
+    };
+
+    //删除指定KEY的元素，成功返回True，失败返回False
+    this.removeByKey = function(_key) {
+        var bln = false;
+        try {
+            for (i = 0; i < this.elements.length; i++) {
+                if (this.elements[i].key == _key) {
+                    this.elements.splice(i, 1);
+                    return true;
+                }
+            }
+        } catch (e) {
+            bln = false;
+        }
+        return bln;
+    };
+    
+    //删除指定VALUE的元素，成功返回True，失败返回False
+    this.removeByValue = function(_value) {//removeByValueAndKey
+        var bln = false;
+        try {
+            for (i = 0; i < this.elements.length; i++) {
+                if (this.elements[i].value == _value) {
+                    this.elements.splice(i, 1);
+                    return true;
+                }
+            }
+        } catch (e) {
+            bln = false;
+        }
+        return bln;
+    };
+    
+    //删除指定VALUE的元素，成功返回True，失败返回False
+    this.removeByValueAndKey = function(_key,_value) {
+        var bln = false;
+        try {
+            for (i = 0; i < this.elements.length; i++) {
+                if (this.elements[i].value == _value && this.elements[i].key == _key) {
+                    this.elements.splice(i, 1);
+                    return true;
+                }
+            }
+        } catch (e) {
+            bln = false;
+        }
+        return bln;
+    };
+
+    //获取指定KEY的元素值VALUE，失败返回NULL
+    this.get = function(_key) {
+        try {
+            for (i = 0; i < this.elements.length; i++) {
+                if (this.elements[i].key == _key) {
+                    return this.elements[i].value;
+                }
+            }
+        } catch (e) {
+            return false;
+        }
+        return false;
+    };
+
+    //获取指定索引的元素（使用element.key，element.value获取KEY和VALUE），失败返回NULL
+    this.element = function(_index) {
+        if (_index < 0 || _index >= this.elements.length) {
+            return null;
+        }
+        return this.elements[_index];
+    };
+
+    //判断MAP中是否含有指定KEY的元素
+    this.containsKey = function(_key) {
+        var bln = false;
+        try {
+            for (i = 0; i < this.elements.length; i++) {
+                if (this.elements[i].key == _key) {
+                    bln = true;
+                }
+            }
+        } catch (e) {
+            bln = false;
+        }
+        return bln;
+    };
+
+    //判断MAP中是否含有指定VALUE的元素
+    this.containsValue = function(_value) {
+        var bln = false;
+        try {
+            for (i = 0; i < this.elements.length; i++) {
+                if (this.elements[i].value == _value) {
+                    bln = true;
+                }
+            }
+        } catch (e) {
+            bln = false;
+        }
+        return bln;
+    };
+    
+    //判断MAP中是否含有指定VALUE的元素
+    this.containsObj = function(_key,_value) {
+        var bln = false;
+        try {
+            for (i = 0; i < this.elements.length; i++) {
+                if (this.elements[i].value == _value && this.elements[i].key == _key) {
+                    bln = true;
+                }
+            }
+        } catch (e) {
+            bln = false;
+        }
+        return bln;
+    };
+
+    //获取MAP中所有VALUE的数组（ARRAY）
+    this.values = function() {
+        var arr = new Array();
+        for (i = 0; i < this.elements.length; i++) {
+            arr.push(this.elements[i].value);
+        }
+        return arr;
+    };
+    
+    //获取MAP中所有VALUE的数组（ARRAY）
+    this.valuesByKey = function(_key) {
+        var arr = new Array();
+        for (i = 0; i < this.elements.length; i++) {
+            if (this.elements[i].key == _key) {
+                arr.push(this.elements[i].value);
+            }
+        }
+        return arr;
+    };
+
+    //获取MAP中所有KEY的数组（ARRAY）
+    this.keys = function() {
+        var arr = new Array();
+        for (i = 0; i < this.elements.length; i++) {
+            arr.push(this.elements[i].key);
+        }
+        return arr;
+    };
+    
+    //获取key通过value
+    this.keysByValue = function(_value) {
+        var arr = new Array();
+        for (i = 0; i < this.elements.length; i++) {
+            if(_value == this.elements[i].value){
+                arr.push(this.elements[i].key);
+            }
+        }
+        return arr;
+    };
+    
+    //获取MAP中所有KEY的数组（ARRAY）
+    this.keysRemoveDuplicate = function() {
+        var arr = new Array();
+        for (i = 0; i < this.elements.length; i++) {
+            var flag = true;
+            for(var j=0;j<arr.length;j++){
+                if(arr[j] == this.elements[i].key){
+                    flag = false;
+                    break;
+                } 
+            }
+            if(flag){
+                arr.push(this.elements[i].key);
+            }
+        }
+        return arr;
+    };
+}
