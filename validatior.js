@@ -29,20 +29,21 @@ var methods={
 		if(this.isNotEmpty(msgType)){ //需要显示错误信息
 			count++;
 			console.log(msg[msgType]);
-			if(!this.isNotEmpty(label.html())){
-				if(this.isNotEmpty(num)){
-					mssg=msg[msgType].replace('x',num);
-				}else{
-					mssg=msg[msgType];
-				}
-				
+			if(this.isNotEmpty(num)){
+				mssg=msg[msgType].replace('x',num);
 			}else{
-				mssg=label.html();
+				mssg=msg[msgType];
 			}
+			
 			flag=false;
 		}else{   //不需要显示错误信息
 			mssg='';
 		}
+		
+		if(this.isNotEmpty(label.html())){
+			mssg=label.html();
+		}
+
 		label.html(mssg);
 		return flag;
 	},
