@@ -485,32 +485,5 @@ function Map() {
         return arr;
     };
     
-    //获取key通过value
-    this.keysByValue = function(_value) {
-        var arr = new Array();
-        for (i = 0; i < this.elements.length; i++) {
-            if(_value == this.elements[i].value){
-                arr.push(this.elements[i].key);
-            }
-        }
-        return arr;
-    };
-    
-    //获取MAP中所有KEY的数组（ARRAY）
-    this.keysRemoveDuplicate = function() {
-        var arr = new Array();
-        for (i = 0; i < this.elements.length; i++) {
-            var flag = true;
-            for(var j=0;j<arr.length;j++){
-                if(arr[j] == this.elements[i].key){
-                    flag = false;
-                    break;
-                } 
-            }
-            if(flag){
-                arr.push(this.elements[i].key);
-            }
-        }
-        return arr;
-    };
+
 }
