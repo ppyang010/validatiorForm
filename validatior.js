@@ -21,89 +21,10 @@ var regexs={
 }
 var count=0;
 
-var inputMap=new Map();
+var inputMap=new Map();//用于每个dom 判断结果状态记录
 
 //常用方法
-var methods={
-	//显示提示信息
-	showMsg:function(dom,msgType,num){
-		var mssg='';
-		var flag=true;
-		var label;
-		
-		//console.log(inputMap);
-		if(this.isEmpty(msgLabel)){
-			if ($(dom).next('.va-label').length == '0') {
-				$(dom).after('<label class="va-label"></label>');
-			}
-			label = $(dom).next('.va-label');
-		}else{
-			label=$(msgLabel);
-		}
-		
 
-		if(this.isNotEmpty(msgType)){ //需要显示错误信息
-			count++;
-			//console.log(msg[msgType]);
-			if(!this.isNotEmpty(label.html())){
-				if(this.isNotEmpty(num)){
-					mssg=msg[msgType].replace('x',num);
-				}else{
-					mssg=msg[msgType];
-				}
-				
-			}else{
-				mssg=label.html();
-			}
-			flag=false;
-			this.updateMap(dom,flag);
-			
-		}else{   //不需要显示错误信息
-			//console.log(inputMap.get(dom));
-			if(inputMap.get(dom)){
-				mssg='';	
-				inputMap.put(dom,true);
-			}else{
-				mssg=label.html();
-				this.updateMap(dom,flag);
-			}
-		}
-		label.html(mssg);
-		return flag;
-	},
-	isNotEmpty:function (str) {
-		if(str==null || str == ''){
-			return false;
-		}else{
-			return true;
-		}
-	},
-	isEmpty:function(str){
-		if(str==null || str == ''){
-			return true;
-		}else{
-			return false;
-		}
-	},
-	toShow:function(flag,dom,msgType,num){
-		if(Validatior.prototype.required(dom)){
-			if(flag) {
-				return methods.showMsg(dom,'');
-			} else {
-				return methods.showMsg(dom,msgType,num);
-			}
-		}
-		return false;
-	},
-	updateMap:function(dom,flag){
-		if(inputMap.containsKey(dom)){
-			inputMap.put(dom,inputMap.get(dom)&&flag);
-		}else{
-			inputMap.put(dom,flag);	
-		}
-	}
-
-}
 //默认提示语
 var msg={
 	required:'不能为空',
@@ -126,31 +47,30 @@ var mods={
 
 function Validatior() {
 	this._init.apply(this, arguments);
+	_self=this;
 }
 
 Validatior.prototype = {
 	_init: function(options) {
 		this.formId = options.formId;
-		msgLabel=options.msgLabel;
 		this.validation();
 		this.callBackFun=options.callBackFun;
+		if(options.defaultTab==null){
+			this.defaultTab=true; 
+		}else{
+			this.defaultTab=options.defaultTab;
+		}
+
 	},
 
 	validation: function() {
 		var self = this;
+		
 		$("#" + this.formId).submit(function() {
 			return self.SubmitValid();
 		});
 		var validinput = $("#" + this.formId + " :input");
-		for(var i=0, num = validinput.length;i<num;i++){
-			//console.log(validinput[i]);
-			$(validinput[i]).focus(function(){
-				inputMap.put(this,true);
-			})
-		}
-
 	
-
 
 		mods.class.forEach(function(value, index, array){
 			$("."+value).blur(function(){
@@ -160,13 +80,28 @@ Validatior.prototype = {
 
 		});
 
-
+		console.log(self);
 		mods.attr.forEach(function(value, index, array){
 			$("["+value+"]").blur(function(){
 				self[value](this);
 			});
 			
 		});
+
+		for(var i=0, num = validinput.length;i<num;i++){
+			//console.log(validinput[i]);
+			$(validinput[i]).focus(function(){
+				inputMap.put(this,true);
+			})
+			$(validinput[i]).blur(function(){
+				if(inputMap.get(this)){
+					//_self['callBackFun'](this,true);
+					if(typeof _self.callBackFun =='function'){ //回调函数存在
+						_self.callBackFun(this,true);
+					}
+				}
+			})
+		}
 			
 	},
 
@@ -189,30 +124,146 @@ Validatior.prototype = {
 
 		return flag;
 	},
+	methods:{
+		
+	//显示提示信息
+	showMsg:function(dom,msgType,num){
+		if(_self.defaultTab){
+			return this.defaultShowMsg(dom,msgType,num);//使用默认消息显示方式
+		}else{
+			return this.customShowMsg(dom,msgType,num);//不使用默认的消息显示方式
+		}
+	},
+	defaultShowMsg:function(dom,msgType,num){//默认消息显示方式
+		var mssg='';
+		var flag=true;
+		var label;
+		
+		//console.log(inputMap);
+		if ($(dom).next('.va-label').length == '0') {
+			$(dom).after('<label class="va-label"></label>');
+		}
+		label = $(dom).next('.va-label');
+		
 
+		if(this.isNotEmpty(msgType)){ //需要显示错误信息
+			count++;
+			//console.log(msg[msgType]);
+			if(!this.isNotEmpty(label.html())){
+				if(this.isNotEmpty(num)){
+					mssg=msg[msgType].replace('x',num);
+				}else{
+					mssg=msg[msgType];
+				}
+				
+			}else{
+				mssg=label.html();
+			}
+			flag=false;
+			if(inputMap.get(dom)){//第一次验证不通过时调用回调函数
+				if(typeof _self.callBackFun =='function'){ //回调函数存在
+					_self['callBackFun'](dom,flag,msgType,mssg);
+				}
+			}
+			this.updateMap(dom,flag);
+			
+		}
+	/*	else{   //不需要显示错误信息
+			//console.log(inputMap.get(dom));
+			if(inputMap.get(dom)){
+				mssg='';	
+				inputMap.put(dom,true);
+			}else{
+				mssg=label.html();
+				this.updateMap(dom,flag);
+			}
+		}*/
+		label.html(mssg);
+		//console.log(_self);
+		
+		return flag;
+	},
+	customShowMsg:function(dom,msgType,num){//不使用默认的消息显示方式
+		var mssg='';
+		var flag=true;
+		var label;
+		if(this.isNotEmpty(msgType)){ //需要显示错误信息
+			count++;
+			//console.log(msg[msgType]);
+			if(this.isNotEmpty(num)){
+				mssg=msg[msgType].replace('x',num);
+			}else{
+				mssg=msg[msgType];
+			}
+				
+			flag=false;
+			if(inputMap.get(dom)){//第一次验证不通过时调用回调函数
+				if(typeof _self.callBackFun =='function'){ //回调函数存在
+					_self['callBackFun'](dom,flag,msgType,mssg);
+				}
+			}
+			this.updateMap(dom,flag);
+			
+		}
+		
+		return flag;
+	},
 
+	isNotEmpty:function (str) {
+		if(str==null || str == ''){
+			return false;
+		}else{
+			return true;
+		}
+	},
+	isEmpty:function(str){
+		if(str==null || str == ''){
+			return true;
+		}else{
+			return false;
+		}
+	},
+	toShow:function(flag,dom,msgType,num){
+		if(Validatior.prototype.required(dom)){
+			if(flag) {
+				return this.showMsg(dom,'');
+			} else {
+				return this.showMsg(dom,msgType,num);
+			}
+		}
+		return false;
+	},
+	updateMap:function(dom,flag){
+		if(inputMap.containsKey(dom)){
+			inputMap.put(dom,inputMap.get(dom)&&flag);
+		}else{
+			inputMap.put(dom,flag);	
+		}
+	}
+
+	},
 		
 
 
-
+	//功能区----------------------------------------
 	//验证邮箱
 	validEmail: function(dom) {
 		var email = $.trim($(dom).val());
 
 		var flag=email.match(regexs.email);
-		return methods.toShow(flag,dom,'email');
+		return this.methods.toShow(flag,dom,'email');
 	},
 	//验证数字
 	validNumber: function(dom) {
 		var number = $.trim($(dom).val());
 		var flag=number.match(regexs.number);
-		return methods.toShow(flag,dom,'number');
+		return this.methods.toShow(flag,dom,'number');
 	},
 	//验证手机号
 	validPhone: function(dom) {
 		var number = $.trim($(dom).val());
 		var flag=number.match(regexs.phone);
-		return methods.toShow(flag,dom,'number');
+		return this.methods.toShow(flag,dom,'number');
 	},
 
 	/**
@@ -226,7 +277,7 @@ Validatior.prototype = {
 	validDate:function(dom){
 		var str = $.trim($(dom).val());
 		var flag=str.match(regexs.date);
-		return methods.toShow(flag,dom,'date');
+		return this.methods.toShow(flag,dom,'date');
 
 	},
 	//验证非空
@@ -234,9 +285,9 @@ Validatior.prototype = {
 		
 		var str=$.trim($(dom).val());
 		if(str){
-			return methods.showMsg(dom,'');
+			return this.methods.showMsg(dom,'');
 		}else{
-			return methods.showMsg(dom,'required');
+			return this.methods.showMsg(dom,'required');
 		}
 	},
 
@@ -248,7 +299,7 @@ Validatior.prototype = {
 		var min=dom.getAttribute("minlength");
 		var str=$.trim($(dom).val());
 		var flag=(str.length>=min);
-		return methods.toShow(flag,dom,'minlength',min);
+		return this.methods.toShow(flag,dom,'minlength',min);
 	},
 
 	//最大长度 <=
@@ -257,21 +308,21 @@ Validatior.prototype = {
 		var str=$.trim($(dom).val());
 		
 		var flag=(str.length<=num);
-		return methods.toShow(flag,dom,'maxlength',num);
+		return this.methods.toShow(flag,dom,'maxlength',num);
 	},
 	//最小值
 	minnum:function(dom){
 		var num=dom.getAttribute("minnum");
 		var str=$.trim($(dom).val());
 		var flag=(+str >= +num);
-		return methods.toShow(flag,dom,'minnum',num);
+		return this.methods.toShow(flag,dom,'minnum',num);
 	},
 	//最大值
 	maxnum:function(dom){
 		var num=dom.getAttribute("maxnum");
 		var str=$.trim($(dom).val());
 		var flag=(+str <= +num);
-		return methods.toShow(flag,dom,'maxnum',num);
+		return this.methods.toShow(flag,dom,'maxnum',num);
 
 	}
 	//远程验证 功能未进行验证
@@ -369,22 +420,7 @@ function Map() {
         return bln;
     };
     
-    //删除指定VALUE的元素，成功返回True，失败返回False
-    this.removeByValue = function(_value) {//removeByValueAndKey
-        var bln = false;
-        try {
-            for (i = 0; i < this.elements.length; i++) {
-                if (this.elements[i].value == _value) {
-                    this.elements.splice(i, 1);
-                    return true;
-                }
-            }
-        } catch (e) {
-            bln = false;
-        }
-        return bln;
-    };
-    
+   
 
     //获取指定KEY的元素值VALUE，失败返回NULL
     this.get = function(_key) {
@@ -400,13 +436,6 @@ function Map() {
         return false;
     };
 
-    //获取指定索引的元素（使用element.key，element.value获取KEY和VALUE），失败返回NULL
-    this.element = function(_index) {
-        if (_index < 0 || _index >= this.elements.length) {
-            return null;
-        }
-        return this.elements[_index];
-    };
 
     //判断MAP中是否含有指定KEY的元素
     this.containsKey = function(_key) {
@@ -423,53 +452,6 @@ function Map() {
         return bln;
     };
 
-    //判断MAP中是否含有指定VALUE的元素
-    this.containsValue = function(_value) {
-        var bln = false;
-        try {
-            for (i = 0; i < this.elements.length; i++) {
-                if (this.elements[i].value == _value) {
-                    bln = true;
-                }
-            }
-        } catch (e) {
-            bln = false;
-        }
-        return bln;
-    };
-    
-    //判断MAP中是否含有指定VALUE的元素
-    this.containsObj = function(_key,_value) {
-        var bln = false;
-        try {
-            for (i = 0; i < this.elements.length; i++) {
-                if (this.elements[i].value == _value && this.elements[i].key == _key) {
-                    bln = true;
-                }
-            }
-        } catch (e) {
-            bln = false;
-        }
-        return bln;
-    };
-
-    //获取MAP中所有VALUE的数组（ARRAY）
-    this.values = function() {
-        var arr = new Array();
-        for (i = 0; i < this.elements.length; i++) {
-            arr.push(this.elements[i].value);
-        }
-        return arr;
-    };
-
-    //获取MAP中所有KEY的数组（ARRAY）
-    this.keys = function() {
-        var arr = new Array();
-        for (i = 0; i < this.elements.length; i++) {
-            arr.push(this.elements[i].key);
-        }
-        return arr;
-    };
-    
+      
 
 }

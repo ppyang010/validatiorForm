@@ -99,7 +99,11 @@ var validatior = new Validatior({
 	});*/
 
 	var validatior = new Validatior({
-		"formId": "form1"
+		"formId": "form1",
+		defaultTab:true, 						//是否使用默认的消息显示方式
+		callBackFun:function(dom,flag,type,msg){//  返回dom 验证是否通过 未通过的验证类型 错误提示语句
+			console.log(arguments);
+		}
 	});
 
 	
