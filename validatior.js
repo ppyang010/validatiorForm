@@ -168,7 +168,7 @@ Validatior.prototype = {
 			this.updateMap(dom,flag);
 			
 		}
-	/*	else{   //不需要显示错误信息
+		else{   //不需要显示错误信息
 			//console.log(inputMap.get(dom));
 			if(inputMap.get(dom)){
 				mssg='';	
@@ -177,7 +177,7 @@ Validatior.prototype = {
 				mssg=label.html();
 				this.updateMap(dom,flag);
 			}
-		}*/
+		}
 		label.html(mssg);
 		//console.log(_self);
 		
