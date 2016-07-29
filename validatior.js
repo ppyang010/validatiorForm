@@ -1,3 +1,14 @@
+(function(){ 
+})();
+/**
+ * 表单验证组件
+ * @version 1.0
+ * @author 644724460@qq.com
+ * @since   2016.07.29
+ * @import jquery
+ */
+
+
 
 //默认正则表达式集合 	
 var regexs={
@@ -122,6 +133,7 @@ Validatior.prototype = {
 		this.formId = options.formId;
 		msgLabel=options.msgLabel;
 		this.validation();
+		this.callBackFun=options.callBackFun;
 	},
 
 	validation: function() {
@@ -373,21 +385,6 @@ function Map() {
         return bln;
     };
     
-    //删除指定VALUE的元素，成功返回True，失败返回False
-    this.removeByValueAndKey = function(_key,_value) {
-        var bln = false;
-        try {
-            for (i = 0; i < this.elements.length; i++) {
-                if (this.elements[i].value == _value && this.elements[i].key == _key) {
-                    this.elements.splice(i, 1);
-                    return true;
-                }
-            }
-        } catch (e) {
-            bln = false;
-        }
-        return bln;
-    };
 
     //获取指定KEY的元素值VALUE，失败返回NULL
     this.get = function(_key) {
@@ -461,17 +458,6 @@ function Map() {
         var arr = new Array();
         for (i = 0; i < this.elements.length; i++) {
             arr.push(this.elements[i].value);
-        }
-        return arr;
-    };
-    
-    //获取MAP中所有VALUE的数组（ARRAY）
-    this.valuesByKey = function(_key) {
-        var arr = new Array();
-        for (i = 0; i < this.elements.length; i++) {
-            if (this.elements[i].key == _key) {
-                arr.push(this.elements[i].value);
-            }
         }
         return arr;
     };
