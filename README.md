@@ -50,5 +50,5 @@ var validatior = new Validatior({
 	<button type="submit">提交</button>	
 ```
 
-* 4.演示demo
+* 4.演示demo<br>
 [演示demo](http://htmlpreview.github.io/?https://github.com/ppyang010/validatiorForm/blob/master/index.html)
