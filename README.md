@@ -4,7 +4,7 @@
 可使用<script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js">
 ##使用介绍
 ###初始化
-
+```javascript
 var validatior = new Validatior({
 	"formId": "form1",						//form表单id
 	defaultTab:true, 						//是否使用默认的消息显示方式
@@ -12,6 +12,7 @@ var validatior = new Validatior({
 		console.log(arguments);
 	}
 });
+```
 
 
 回调函数的参数列表为 dom（当前控件） 验证是否通过 未通过的验证类型 错误提示语句
