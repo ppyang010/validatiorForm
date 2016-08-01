@@ -1,7 +1,7 @@
 # 表单验证组件
 ##前置条件
 请先导入jquery文件<br>
-可使用<script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js">
+在导入本组件validatior.js
 ##使用介绍
 ###初始化
 ```javascript
