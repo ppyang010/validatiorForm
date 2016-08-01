@@ -35,7 +35,7 @@ var validatior = new Validatior({
 		</ol>
 	</div>
 
-	<form id="form1" class="va-from" action="#">
+	<form id="form1" class="va-from" action="http://www.baidu.com">
 		<table>
 			<tr>
 				<td>用户名：</td>
@@ -79,14 +79,21 @@ var validatior = new Validatior({
 				<td></td>
 			</tr>
 			<tr>
-				<td><input type="submit" value="提交" class="va-submit"/></td>
-				<td><input type="reset" value="重置" class="va-reset"/></td>
+				<td><input type="submit" value="提交" /></td>
+				<td><input type="reset" value="重置" /></td>
 				<td></td>
 			</tr>
 		</table>
 
 	</form>
 	<label id="msgLabel"></label>
+
+
+	<form id="form2">
+		<input type="text" class="validEmail"><br/>
+		<input type="submit" value="提交" />
+		<button type="submit">提交</button>
+	</form>
 </body>
 </html>
 
@@ -100,6 +107,14 @@ var validatior = new Validatior({
 
 	var validatior = new Validatior({
 		"formId": "form1",
+		defaultTab:true, 						//是否使用默认的消息显示方式
+		callBackFun:function(dom,flag,type,msg){//  返回dom 验证是否通过 未通过的验证类型 错误提示语句
+			console.log(arguments);
+		}
+	});
+
+	var validatior = new Validatior({
+		"formId": "form2",
 		defaultTab:true, 						//是否使用默认的消息显示方式
 		callBackFun:function(dom,flag,type,msg){//  返回dom 验证是否通过 未通过的验证类型 错误提示语句
 			console.log(arguments);

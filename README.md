@@ -6,13 +6,14 @@
 ###初始化
 ```javascript
 var validatior = new Validatior({
-	"formId": "form1",						//form表单id
-	defaultTab:true, 						//是否使用默认的消息显示方式
-	callBackFun:function(dom,flag,type,msg){// 回调函数 返回dom 验证是否通过 未通过的验证类型 错误提示语句
+	"formId": "form1",						//form表单id 必填
+	defaultTab:true, 						//是否使用默认的消息显示方式  true使用默然消息显示方式 false不使用默认消息显示  可选属性 默然为true
+	callBackFun:function(dom,flag,type,msg){// 回调函数 返回dom 验证是否通过 未通过的验证类型 错误提示语句  可选属性
 		console.log(arguments);
 	}
 });
 ```
+###验证功能
+*1.类验证
+*2.属性验证
 
-
-回调函数的参数列表为 dom（当前控件） 验证是否通过 未通过的验证类型 错误提示语句

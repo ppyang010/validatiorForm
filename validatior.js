@@ -80,7 +80,7 @@ Validatior.prototype = {
 
 		});
 
-		console.log(self);
+	//	console.log(self);
 		mods.attr.forEach(function(value, index, array){
 			$("["+value+"]").blur(function(){
 				self[value](this);
@@ -89,18 +89,21 @@ Validatior.prototype = {
 		});
 
 		for(var i=0, num = validinput.length;i<num;i++){
-			//console.log(validinput[i]);
-			$(validinput[i]).focus(function(){
-				inputMap.put(this,true);
-			})
-			$(validinput[i]).blur(function(){
-				if(inputMap.get(this)){
-					//_self['callBackFun'](this,true);
-					if(typeof _self.callBackFun =='function'){ //回调函数存在
-						_self.callBackFun(this,true);
+			var type=validinput[i].getAttribute("type");
+			if(type!="submit"&&type!="reset"){
+				inputMap.put(validinput[i],true);
+				$(validinput[i]).focus(function(){
+					inputMap.put(this,true);
+				})
+				$(validinput[i]).blur(function(){
+					if(inputMap.get(this)){
+						//_self['callBackFun'](this,true);
+						if(typeof _self.callBackFun =='function'){ //回调函数存在
+							_self.callBackFun(this,true);
+						}
 					}
-				}
-			})
+				})
+			}
 		}
 			
 	},
@@ -117,10 +120,11 @@ Validatior.prototype = {
 			alert(e);
 			flag = false;	//防止异常出现继续提交
 		}
+		console.log(count);
 		if(count!=0){
 			flag=false;
 		}
-		console.log(flag);
+		//console.log(flag);
 
 		return flag;
 	},
