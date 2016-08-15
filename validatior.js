@@ -37,11 +37,13 @@ var msg={
 	fail:'验证失败',
 	number:'请输入数字',
 	phone:'请输入正确的手机号',
-	date:'日期格式不正确'
+	date:'日期格式不正确',
+	rePassword:'两次密码输入不正确',
+	passwordStrengt:'密码不能为纯数字'
 }
 
 var mods={
-	'class':['required','validEmail','validNumber','validPhone','validDate'],
+	'class':['required','validEmail','validNumber','validPhone','validDate','validPassword','validPassword'],
 	'attr':['minlength','maxlength','minnum','maxnum']
 }
 
@@ -62,7 +64,7 @@ Validatior.prototype = {
 		}
 
 	},
-
+	//初始化绑定事件
 	validation: function() {
 		var self = this;
 		
@@ -145,7 +147,7 @@ Validatior.prototype = {
 		
 		//console.log(inputMap);
 		if ($(dom).next('.va-label').length == '0') {
-			$(dom).after('<label class="va-label"></label>');
+			$(dom).after('<label class="va-label" style="color:red"></label>');
 		}
 		label = $(dom).next('.va-label');
 		
@@ -283,6 +285,31 @@ Validatior.prototype = {
 		var flag=str.match(regexs.date);
 		return this.methods.toShow(flag,dom,'date');
 
+	},
+	/*
+	验证密码
+
+	 */
+	validPassword: function(dom) {
+		var number = $.trim($(dom).val());
+		var list=$('.validPassword');
+		var length=list.length;
+		var flag=number.match(regexs.number);
+		flag=!flag;
+		if(length>1 && flag==true){
+			for(var i=1;i<length;i++){
+				if(list.eq(i).val()!=list.eq(i-1).val()){
+					flag=false;
+					break;
+				}
+			}
+
+			return this.methods.toShow(flag,dom,'rePassword');
+		}else{
+			return this.methods.toShow(flag,dom,'passwordStrengt');
+		}
+		//console.log(list.eq(0).val());
+		
 	},
 	//验证非空
 	required:function(dom){
