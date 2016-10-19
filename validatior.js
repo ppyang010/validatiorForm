@@ -1,5 +1,3 @@
-(function(){ 
-})();
 /**
  * 表单验证组件
  * @version 1.0
@@ -7,10 +5,9 @@
  * @since   2016.07.29
  * @import jquery
  */
+(function(){
 
-
-
-//默认正则表达式集合 	
+//默认正则表达式集合
 var regexs={
 	email:/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/,
 	number:/^\d{1,}$/,
@@ -56,7 +53,7 @@ Validatior.prototype = {
 		this.validation();
 		this.callBackFun=options.callBackFun;
 		if(options.defaultTab==null){
-			this.defaultTab=true; 
+			this.defaultTab=true;
 		}else{
 			this.defaultTab=options.defaultTab;
 		}
@@ -65,18 +62,18 @@ Validatior.prototype = {
 
 	validation: function() {
 		var self = this;
-		
+
 		$("#" + this.formId).submit(function() {
 			return self.SubmitValid();
 		});
 		var validinput = $("#" + this.formId + " :input");
-	
+
 
 		mods.class.forEach(function(value, index, array){
 			$("."+value).blur(function(){
 				self[value](this);
 			});
-			
+
 
 		});
 
@@ -85,7 +82,7 @@ Validatior.prototype = {
 			$("["+value+"]").blur(function(){
 				self[value](this);
 			});
-			
+
 		});
 
 		for(var i=0, num = validinput.length;i<num;i++){
@@ -105,7 +102,7 @@ Validatior.prototype = {
 				})
 			}
 		}
-			
+
 	},
 
 	SubmitValid: function() {
@@ -115,7 +112,7 @@ Validatior.prototype = {
 		try{
 			var validinput = $("#" + this.formId + " :input");
 			validinput.blur();
-	
+
 		}catch(e){
 			alert(e);
 			flag = false;	//防止异常出现继续提交
@@ -129,7 +126,7 @@ Validatior.prototype = {
 		return flag;
 	},
 	methods:{
-		
+
 	//显示提示信息
 	showMsg:function(dom,msgType,num){
 		if(_self.defaultTab){
@@ -142,13 +139,13 @@ Validatior.prototype = {
 		var mssg='';
 		var flag=true;
 		var label;
-		
+
 		//console.log(inputMap);
 		if ($(dom).next('.va-label').length == '0') {
 			$(dom).after('<label class="va-label"></label>');
 		}
 		label = $(dom).next('.va-label');
-		
+
 
 		if(this.isNotEmpty(msgType)){ //需要显示错误信息
 			count++;
@@ -159,7 +156,7 @@ Validatior.prototype = {
 				}else{
 					mssg=msg[msgType];
 				}
-				
+
 			}else{
 				mssg=label.html();
 			}
@@ -170,12 +167,12 @@ Validatior.prototype = {
 				}
 			}
 			this.updateMap(dom,flag);
-			
+
 		}
 		else{   //不需要显示错误信息
 			//console.log(inputMap.get(dom));
 			if(inputMap.get(dom)){
-				mssg='';	
+				mssg='';
 				inputMap.put(dom,true);
 			}else{
 				mssg=label.html();
@@ -184,7 +181,7 @@ Validatior.prototype = {
 		}
 		label.html(mssg);
 		//console.log(_self);
-		
+
 		return flag;
 	},
 	customShowMsg:function(dom,msgType,num){//不使用默认的消息显示方式
@@ -199,7 +196,7 @@ Validatior.prototype = {
 			}else{
 				mssg=msg[msgType];
 			}
-				
+
 			flag=false;
 			if(inputMap.get(dom)){//第一次验证不通过时调用回调函数
 				if(typeof _self.callBackFun =='function'){ //回调函数存在
@@ -207,9 +204,9 @@ Validatior.prototype = {
 				}
 			}
 			this.updateMap(dom,flag);
-			
+
 		}
-		
+
 		return flag;
 	},
 
@@ -241,12 +238,12 @@ Validatior.prototype = {
 		if(inputMap.containsKey(dom)){
 			inputMap.put(dom,inputMap.get(dom)&&flag);
 		}else{
-			inputMap.put(dom,flag);	
+			inputMap.put(dom,flag);
 		}
 	}
 
 	},
-		
+
 
 
 	//验证功能区----------------------------------------
@@ -273,9 +270,9 @@ Validatior.prototype = {
 	/**
 	 * 验证日期
 	 * 支持
-		YYYY-MM-DD 
-		YYYY/MM/DD 
-		YYYY_MM_DD 
+		YYYY-MM-DD
+		YYYY/MM/DD
+		YYYY_MM_DD
 		YYYY.MM.DD的形式
 	 */
 	validDate:function(dom){
@@ -286,7 +283,7 @@ Validatior.prototype = {
 	},
 	//验证非空
 	required:function(dom){
-		
+
 		var str=$.trim($(dom).val());
 		if(str){
 			return this.methods.showMsg(dom,'');
@@ -310,7 +307,7 @@ Validatior.prototype = {
 	maxlength:function(dom){
 		var num=dom.getAttribute("maxlength");
 		var str=$.trim($(dom).val());
-		
+
 		var flag=(str.length<=num);
 		return this.methods.toShow(flag,dom,'maxlength',num);
 	},
@@ -361,7 +358,7 @@ Validatior.prototype = {
  * size()     获取MAP元素个数
  * isEmpty()    判断MAP是否为空
  * clear()     删除MAP所有元素
- * put(key, value)   向MAP中增加元素（key, value) 
+ * put(key, value)   向MAP中增加元素（key, value)
  * remove(key)    删除指定KEY的元素，成功返回True，失败返回False
  * get(key)    获取指定KEY的元素值VALUE，失败返回NULL
  * element(index)   获取指定索引的元素（使用element.key，element.value获取KEY和VALUE），失败返回NULL
@@ -396,7 +393,7 @@ function Map() {
         this.elements = new Array();
     };
 
-    //向MAP中增加元素（key, value) 
+    //向MAP中增加元素（key, value)
     this.put = function(_key, _value) {
     	if(this.containsKey(_key)){
     		this.removeByKey(_key);
@@ -405,7 +402,7 @@ function Map() {
         	key : _key,
         	value : _value
     	});
-        
+
     };
 
     //删除指定KEY的元素，成功返回True，失败返回False
@@ -423,8 +420,8 @@ function Map() {
         }
         return bln;
     };
-    
-   
+
+
 
     //获取指定KEY的元素值VALUE，失败返回NULL
     this.get = function(_key) {
@@ -455,7 +452,6 @@ function Map() {
         }
         return bln;
     };
-
-      
-
 }
+window.Validatior=Validatior;
+})();
